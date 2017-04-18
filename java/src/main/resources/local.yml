@@ -1,0 +1,10 @@
+# Configuration file.
+# You can add any fields you need, be sure to update DropTokenConfiguration accordingly.
+template: some-crazy text
+
+logging:
+  level: INFO
+  appenders:
+    - type: console
+      threshold: TRACE
+      target: stderr
