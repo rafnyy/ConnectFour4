@@ -3,7 +3,7 @@ We would like you to implement a backend (REST web-service) that allows playing 
 ## Rules of the Game ##
 Drop Token takes place on a 4x4 grid. A token is dropped along a column and said token goes to the lowest unoccupied row of the board. A player wins when they have 4 tokens next to each other either along a row, in a column, or on a diagonal. If the board is filled, and nobody has won then the game is a draw. Each player takes a turn, starting with player 1, until the game reaches either win or draw. If a player tries to put a token in a column that is already full, that results in an error state, and the player must play again until the play a valid move.
 ## Example Game
-![samplegame](https://github.com/rafastealth/9dt-mobile/blob/master/sample_game.png)
+![samplegame](https://github.com/rafastealth/9dt_backend/blob/master/sample_game.png)
 ## Minimal Requirements: ##
 * Each game is between *k = 2* individuals, basic board size is 4x4 (number of columns x number of rows)
 * A player can quit a game at every moment while the game is still in progress. The game will continue as long as there are 2 or more active players and the game is not done. In case only a single player is left, that player is considered the winner.
