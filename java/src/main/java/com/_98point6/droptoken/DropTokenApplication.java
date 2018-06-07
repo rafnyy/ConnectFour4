@@ -1,5 +1,7 @@
 package com._98point6.droptoken;
 
+import com._98point6.droptoken.database.DatabaseConnection;
+import com._98point6.droptoken.database.GamesTable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -9,6 +11,9 @@ import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+
+import javax.inject.Singleton;
 
 /**
  *
@@ -40,9 +45,18 @@ public class DropTokenApplication extends Application<DropTokenConfiguration> {
             environment.jersey().register(new JsonProcessingExceptionMapper());
             environment.jersey().register(new EarlyEofExceptionMapper());
 
-            final DropTokenResource resource = new DropTokenResource();
-            environment.jersey().register(resource);
+            environment.jersey().register(DropTokenResource.class);
 
+            environment.jersey().register(new AbstractBinder() {
+                @Override
+                protected void configure() {
+                    bind(configuration).to(DropTokenConfiguration.class);
+                    bind(DatabaseConnection.class).to(DatabaseConnection.class).in(Singleton.class);
+                    bind(GamesTable.class).to(GamesTable.class);
+                }
+            });
         }
+
+
 
 }

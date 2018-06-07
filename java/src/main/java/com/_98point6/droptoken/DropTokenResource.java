@@ -1,25 +1,19 @@
 package com._98point6.droptoken;
 
-import com._98point6.droptoken.model.CreateGameRequest;
-import com._98point6.droptoken.model.CreateGameResponse;
-import com._98point6.droptoken.model.GameStatusResponse;
-import com._98point6.droptoken.model.GetGamesResponse;
-import com._98point6.droptoken.model.GetMoveResponse;
-import com._98point6.droptoken.model.GetMovesResponse;
-import com._98point6.droptoken.model.PostMoveRequest;
-import com._98point6.droptoken.model.PostMoveResponse;
+import com._98point6.droptoken.board.GameState;
+import com._98point6.droptoken.board.Move;
+import com._98point6.droptoken.database.GamesTable;
+import com._98point6.droptoken.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.inject.Inject;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -29,52 +23,129 @@ import javax.ws.rs.core.Response;
 public class DropTokenResource {
     private static final Logger logger = LoggerFactory.getLogger(DropTokenResource.class);
 
-    public DropTokenResource() {
+    private GamesTable gamesTable;
+
+    @Inject
+    public DropTokenResource(GamesTable gamesTable) {
+        this.gamesTable = gamesTable;
     }
 
     @GET
-    public Response getGames() {
-        return Response.ok(new GetGamesResponse()).build();
+    public Response getGames() throws SQLException {
+        List<String> ids= gamesTable.getAllGameIds();
+
+        GetGamesResponse.Builder builder = new GetGamesResponse.Builder();
+        builder.games(ids);
+        GetGamesResponse getGamesResponse = builder.build();
+
+        return Response.ok(getGamesResponse).build();
     }
 
     @POST
-    public Response createNewGame(CreateGameRequest request) {
+    public Response createNewGame(CreateGameRequest request) throws SQLException {
         logger.info("request={}", request);
-        return Response.ok(new CreateGameResponse()).build();
+
+        if(request.getColumns() < Constants.winSize || request.getRows() < Constants.winSize)
+        {
+            throw new BadRequestException("Size too small, rows and columns must be equal to or greater than " + Constants.winSize);
+        }
+
+        GameState gameState = new GameState(request);
+        String id = gamesTable.insertNewGame(gameState);
+
+        CreateGameResponse.Builder builder = new CreateGameResponse.Builder();
+        CreateGameResponse createGameResponse = builder.gameId(id).build();
+
+        return Response.ok(createGameResponse).build();
     }
 
     @Path("/{id}")
     @GET
-    public Response getGameStatus(@PathParam("id") String gameId) {
+    public Response getGameStatus(@PathParam("id") String gameId) throws SQLException {
         logger.info("gameId = {}", gameId);
-        return Response.ok(new GameStatusResponse()).build();
+        GameState gameState = gamesTable.getGameState(gameId);
+
+        GameStatusResponse.Builder builder = new GameStatusResponse.Builder();
+        builder.players(gameState.getInitialPlayers()).moves(gameState.getMoveHistory().size());
+
+        if (gameState.getWinner() == null) {
+            builder.state(Constants.STATE.IN_PROGRESS.toString());
+
+        } else {
+            builder.winner(gameState.getWinner());
+            builder.state(Constants.STATE.DONE.toString());
+        }
+
+        GameStatusResponse gameStatusResponse = builder.build();
+
+        return Response.ok(gameStatusResponse).build();
     }
 
     @Path("/{id}/{playerId}")
     @POST
-    public Response postMove(@PathParam("id")String gameId, @PathParam("playerId") String playerId, PostMoveRequest request) {
+    public Response postMove(@PathParam("id")String gameId, @PathParam("playerId") String playerId, PostMoveRequest request) throws SQLException {
         logger.info("gameId={}, playerId={}, move={}", gameId, playerId, request);
-        return Response.ok(new PostMoveResponse()).build();
+        //lock row until...
+        GameState gameState = gamesTable.getGameState(gameId);
+        int moveId = gameState.dropToken(playerId, request.getColumn());
+
+        PostMoveResponse.Builder builder = new PostMoveResponse.Builder();
+        PostMoveResponse postMoveResponse = builder.moveLink(gameId + "/moves/" + moveId).build();
+
+        //update games table
+        gamesTable.updateGameState(gameId, gameState);
+        //... games table is updated
+
+        return Response.ok(postMoveResponse).build();
     }
 
     @Path("/{id}/{playerId}")
     @DELETE
-    public Response playerQuit(@PathParam("id")String gameId, @PathParam("playerId") String playerId) {
+    public Response playerQuit(@PathParam("id")String gameId, @PathParam("playerId") String playerId) throws SQLException {
         logger.info("gameId={}, playerId={}", gameId, playerId);
-        return Response.status(202).build();
+        //lock row until...
+        GameState gameState = gamesTable.getGameState(gameId);
+
+        gameState.quit(playerId);
+
+        //update games table
+        gamesTable.updateGameState(gameId, gameState);
+        //... games table is updated
+
+        return Response.status(Response.Status.ACCEPTED).build();
     }
     @Path("/{id}/moves")
     @GET
-    public Response getMoves(@PathParam("id") String gameId, @QueryParam("start") Integer start, @QueryParam("until") Integer until) {
+    public Response getMoves(@PathParam("id") String gameId, @QueryParam("start") Integer start, @QueryParam("until") Integer until) throws SQLException {
         logger.info("gameId={}, start={}, until={}", gameId, start, until);
-        return Response.ok(new GetMovesResponse()).build();
+        GameState gameState = gamesTable.getGameState(gameId);
+        List<Move> moves = gameState.getMoveHistory(start, until);
+        List<GetMoveResponse> getMovesResponses = new ArrayList<>();
+        for(Move move : moves) {
+            GetMoveResponse getMoveResponse = getGetMoveResponse(move);
+            getMovesResponses.add(getMoveResponse);
+        }
+
+        GetMovesResponse.Builder builder = new GetMovesResponse.Builder();
+        GetMovesResponse getMovesResponse = builder.moves(getMovesResponses).build();
+
+        return Response.ok(getMovesResponse).build();
     }
 
     @Path("/{id}/moves/{moveId}")
     @GET
-    public Response getMove(@PathParam("id") String gameId, @PathParam("moveId") Integer moveId) {
+    public Response getMove(@PathParam("id") String gameId, @PathParam("moveId") Integer moveId) throws SQLException {
         logger.info("gameId={}, moveId={}", gameId, moveId);
-        return Response.ok(new GetMoveResponse()).build();
+        GameState gameState = gamesTable.getGameState(gameId);
+        Move move = gameState.getMove(moveId);
+
+        GetMoveResponse getMoveResponse = getGetMoveResponse(move);
+
+        return Response.ok(getMoveResponse).build();
     }
 
+    private GetMoveResponse getGetMoveResponse(Move move) {
+        GetMoveResponse.Builder builder = new GetMoveResponse.Builder();
+        return builder.type(move.getType()).player(move.getPlayer()).column(move.getColumn()).build();
+    }
 }
