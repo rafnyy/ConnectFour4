@@ -72,8 +72,12 @@ public class DropTokenResourceTest {
 
     @After
     public void tearDown() throws Exception {
+        try {
             DriverManager.getConnection
                     ("jdbc:derby:;shutdown=true");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -85,7 +89,7 @@ public class DropTokenResourceTest {
         assertThat(response.getStatus(), is(equalTo(HttpStatus.OK_200)));
         assertThat(response.getEntity(), is(instanceOf(GetGamesResponse.class)));
 
-        GetGamesResponse getGamesResponse = (GetGamesResponse)response.getEntity();
+        GetGamesResponse getGamesResponse = (GetGamesResponse) response.getEntity();
         assertThat(getGamesResponse.getGames().size(), is(equalTo(2)));
         assertThat(getGamesResponse.getGames(), containsInAnyOrder(gameId1, gameId2));
     }
@@ -119,7 +123,7 @@ public class DropTokenResourceTest {
         assertThat(response.getStatus(), is(equalTo(HttpStatus.OK_200)));
         assertThat(response.getEntity(), is(instanceOf(CreateGameResponse.class)));
 
-        CreateGameResponse createGameResponse = (CreateGameResponse)response.getEntity();
+        CreateGameResponse createGameResponse = (CreateGameResponse) response.getEntity();
         String gameId = createGameResponse.getGameId();
         assertThat(gameId, is(notNullValue()));
         return gameId;
@@ -133,7 +137,7 @@ public class DropTokenResourceTest {
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat(response.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse = (GameStatusResponse)response.getEntity();
+        GameStatusResponse gameStatusResponse = (GameStatusResponse) response.getEntity();
         assertThat(gameStatusResponse.getMoves(), is(equalTo(0)));
         assertThat(gameStatusResponse.getWinner().isPresent(), is(equalTo(false)));
         assertThat(gameStatusResponse.getState(), is(equalTo(Constants.STATE.IN_PROGRESS.toString())));
@@ -217,7 +221,7 @@ public class DropTokenResourceTest {
         assertThat(response1.getStatus(), is(HttpStatus.OK_200));
         assertThat(response1.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse1 = (GameStatusResponse)response1.getEntity();
+        GameStatusResponse gameStatusResponse1 = (GameStatusResponse) response1.getEntity();
         assertThat(gameStatusResponse1.getMoves(), is(equalTo(6)));
         assertThat(gameStatusResponse1.getWinner().isPresent(), is(equalTo(false)));
         assertThat(gameStatusResponse1.getState(), is(equalTo(Constants.STATE.IN_PROGRESS.toString())));
@@ -230,7 +234,7 @@ public class DropTokenResourceTest {
         assertThat(response2.getStatus(), is(HttpStatus.OK_200));
         assertThat(response2.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse2 = (GameStatusResponse)response2.getEntity();
+        GameStatusResponse gameStatusResponse2 = (GameStatusResponse) response2.getEntity();
         assertThat(gameStatusResponse2.getMoves(), is(equalTo(7)));
         assertThat(gameStatusResponse2.getWinner().get(), is(equalTo(player1)));
         assertThat(gameStatusResponse2.getState(), is(equalTo(Constants.STATE.DONE.toString())));
@@ -252,7 +256,7 @@ public class DropTokenResourceTest {
         assertThat(response1.getStatus(), is(HttpStatus.OK_200));
         assertThat(response1.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse1 = (GameStatusResponse)response1.getEntity();
+        GameStatusResponse gameStatusResponse1 = (GameStatusResponse) response1.getEntity();
         assertThat(gameStatusResponse1.getMoves(), is(equalTo(6)));
         assertThat(gameStatusResponse1.getWinner().isPresent(), is(equalTo(false)));
         assertThat(gameStatusResponse1.getState(), is(equalTo(Constants.STATE.IN_PROGRESS.toString())));
@@ -265,7 +269,7 @@ public class DropTokenResourceTest {
         assertThat(response2.getStatus(), is(HttpStatus.OK_200));
         assertThat(response2.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse2 = (GameStatusResponse)response2.getEntity();
+        GameStatusResponse gameStatusResponse2 = (GameStatusResponse) response2.getEntity();
         assertThat(gameStatusResponse2.getMoves(), is(equalTo(7)));
         assertThat(gameStatusResponse2.getWinner().get(), is(equalTo(player1)));
         assertThat(gameStatusResponse2.getState(), is(equalTo(Constants.STATE.DONE.toString())));
@@ -291,7 +295,7 @@ public class DropTokenResourceTest {
         assertThat(response1.getStatus(), is(HttpStatus.OK_200));
         assertThat(response1.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse1 = (GameStatusResponse)response1.getEntity();
+        GameStatusResponse gameStatusResponse1 = (GameStatusResponse) response1.getEntity();
         assertThat(gameStatusResponse1.getMoves(), is(equalTo(10)));
         assertThat(gameStatusResponse1.getWinner().isPresent(), is(equalTo(false)));
         assertThat(gameStatusResponse1.getState(), is(equalTo(Constants.STATE.IN_PROGRESS.toString())));
@@ -304,7 +308,7 @@ public class DropTokenResourceTest {
         assertThat(response2.getStatus(), is(HttpStatus.OK_200));
         assertThat(response2.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse2 = (GameStatusResponse)response2.getEntity();
+        GameStatusResponse gameStatusResponse2 = (GameStatusResponse) response2.getEntity();
         assertThat(gameStatusResponse2.getMoves(), is(equalTo(11)));
         assertThat(gameStatusResponse2.getWinner().get(), is(equalTo(player1)));
         assertThat(gameStatusResponse2.getState(), is(equalTo(Constants.STATE.DONE.toString())));
@@ -330,7 +334,7 @@ public class DropTokenResourceTest {
         assertThat(response1.getStatus(), is(HttpStatus.OK_200));
         assertThat(response1.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse1 = (GameStatusResponse)response1.getEntity();
+        GameStatusResponse gameStatusResponse1 = (GameStatusResponse) response1.getEntity();
         assertThat(gameStatusResponse1.getMoves(), is(equalTo(10)));
         assertThat(gameStatusResponse1.getWinner().isPresent(), is(equalTo(false)));
         assertThat(gameStatusResponse1.getState(), is(equalTo(Constants.STATE.IN_PROGRESS.toString())));
@@ -343,7 +347,7 @@ public class DropTokenResourceTest {
         assertThat(response2.getStatus(), is(HttpStatus.OK_200));
         assertThat(response2.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse2 = (GameStatusResponse)response2.getEntity();
+        GameStatusResponse gameStatusResponse2 = (GameStatusResponse) response2.getEntity();
         assertThat(gameStatusResponse2.getMoves(), is(equalTo(11)));
         assertThat(gameStatusResponse2.getWinner().get(), is(equalTo(player1)));
         assertThat(gameStatusResponse2.getState(), is(equalTo(Constants.STATE.DONE.toString())));
@@ -358,7 +362,7 @@ public class DropTokenResourceTest {
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat(response.getEntity(), instanceOf(PostMoveResponse.class));
 
-        PostMoveResponse postMoveResponse = (PostMoveResponse)response.getEntity();
+        PostMoveResponse postMoveResponse = (PostMoveResponse) response.getEntity();
         String moveLink = postMoveResponse.getMoveLink();
 
         return moveLink;
@@ -396,7 +400,7 @@ public class DropTokenResourceTest {
         assertThat(response1.getStatus(), is(HttpStatus.OK_200));
         assertThat(response1.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse1 = (GameStatusResponse)response1.getEntity();
+        GameStatusResponse gameStatusResponse1 = (GameStatusResponse) response1.getEntity();
         assertThat(gameStatusResponse1.getMoves(), is(equalTo(0)));
         assertThat(gameStatusResponse1.getWinner().isPresent(), is(equalTo(false)));
         assertThat(gameStatusResponse1.getState(), is(equalTo(Constants.STATE.IN_PROGRESS.toString())));
@@ -410,7 +414,7 @@ public class DropTokenResourceTest {
         assertThat(response2.getStatus(), is(HttpStatus.OK_200));
         assertThat(response2.getEntity(), instanceOf(GameStatusResponse.class));
 
-        GameStatusResponse gameStatusResponse2 = (GameStatusResponse)response2.getEntity();
+        GameStatusResponse gameStatusResponse2 = (GameStatusResponse) response2.getEntity();
         assertThat(gameStatusResponse2.getMoves(), is(equalTo(1)));
         assertThat(gameStatusResponse2.getWinner().get(), is(equalTo(player2)));
         assertThat(gameStatusResponse2.getState(), is(equalTo(Constants.STATE.DONE.toString())));
@@ -456,7 +460,7 @@ public class DropTokenResourceTest {
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat(response.getEntity(), instanceOf(GetMovesResponse.class));
 
-        GetMovesResponse getMovesResponse = (GetMovesResponse)response.getEntity();
+        GetMovesResponse getMovesResponse = (GetMovesResponse) response.getEntity();
         assertThat(getMovesResponse.getMoves().size(), is(equalTo(5)));
 
         GetMoveResponse getMoveResponse1 = getMovesResponse.getMoves().get(0);
@@ -496,7 +500,7 @@ public class DropTokenResourceTest {
         assertThat(response.getEntity(), instanceOf(GetMovesResponse.class));
 
 
-        GetMovesResponse getMovesResponse = (GetMovesResponse)response.getEntity();
+        GetMovesResponse getMovesResponse = (GetMovesResponse) response.getEntity();
         assertThat(getMovesResponse.getMoves().size(), is(equalTo(2)));
 
         GetMoveResponse getMoveResponse2 = getMovesResponse.getMoves().get(0);
@@ -541,7 +545,7 @@ public class DropTokenResourceTest {
         assertThat(response.getStatus(), is(HttpStatus.OK_200));
         assertThat(response.getEntity(), instanceOf(GetMoveResponse.class));
 
-        GetMoveResponse getMoveResponse = (GetMoveResponse)response.getEntity();
+        GetMoveResponse getMoveResponse = (GetMoveResponse) response.getEntity();
         assertThat(getMoveResponse.getColumn().get(), is(equalTo(1)));
         assertThat(getMoveResponse.getPlayer(), is(equalTo(player2)));
         assertThat(getMoveResponse.getType(), is(equalTo(Constants.MOVE_TYPE.MOVE.toString())));

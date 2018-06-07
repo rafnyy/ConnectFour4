@@ -13,7 +13,8 @@ public class CreateGameRequest {
     private Integer columns;
     private Integer rows;
 
-    public CreateGameRequest() {}
+    public CreateGameRequest() {
+    }
 
     private CreateGameRequest(Builder builder) {
         this.players = Preconditions.checkNotNull(builder.players);

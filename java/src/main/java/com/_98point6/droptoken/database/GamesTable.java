@@ -100,7 +100,7 @@ public class GamesTable {
             states.add(gson.fromJson(json, GameState.class));
         }
 
-       return states;
+        return states;
     }
 
     public String insertNewGame(GameState gameState) throws SQLException {
@@ -110,7 +110,7 @@ public class GamesTable {
 
         NamedParameterStatement preparedStatement = new NamedParameterStatement(databaseConnection.getConnection(), "INSERT into " + TABLE_NAME + " (" + ID + ", " + STATE + ") values (:id, :state)");
         preparedStatement.setString("id", id);
-        preparedStatement.setString("state",  gson.toJson(gameState));
+        preparedStatement.setString("state", gson.toJson(gameState));
         preparedStatement.execute();
 
         return id;
@@ -121,7 +121,7 @@ public class GamesTable {
 
         NamedParameterStatement preparedStatement = new NamedParameterStatement(databaseConnection.getConnection(), "UPDATE " + TABLE_NAME + " SET " + STATE + " =:state WHERE " + ID + " =:id");
         preparedStatement.setString("id", id);
-        preparedStatement.setString("state",  gson.toJson(gameState));
+        preparedStatement.setString("state", gson.toJson(gameState));
         preparedStatement.execute();
 
     }

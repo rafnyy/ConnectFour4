@@ -14,7 +14,8 @@ public class GameStatusResponse {
     private String winner;
     private String state;
 
-    public GameStatusResponse() {}
+    public GameStatusResponse() {
+    }
 
     private GameStatusResponse(Builder builder) {
         this.players = Preconditions.checkNotNull(builder.players);

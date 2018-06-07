@@ -14,6 +14,7 @@ import static org.hamcrest.Matchers.is;
 public class DropTokenExceptionMapperTest {
 
     private DropTokenExceptionMapper dropTokenExceptionMapper = new DropTokenExceptionMapper();
+
     @Test
     public void toResponse400() {
         Response response = dropTokenExceptionMapper.toResponse(new BadRequestException());

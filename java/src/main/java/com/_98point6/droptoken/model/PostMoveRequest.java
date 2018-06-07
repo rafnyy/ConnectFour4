@@ -9,7 +9,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class PostMoveRequest {
     private Integer column;
 
-    public PostMoveRequest() {}
+    public PostMoveRequest() {
+    }
 
     private PostMoveRequest(Builder builder) {
         this.column = Preconditions.checkNotNull(builder.column);

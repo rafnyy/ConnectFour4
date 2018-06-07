@@ -28,7 +28,7 @@ public class WinEvaluator {
         do {
             Space space = getSpaceAt(currentRow, currentColumn);
 
-            if(space != null && space.getWhichPlayer() != null) {
+            if (space != null && space.getWhichPlayer() != null) {
                 Set<MatchedSpace> matchedSpaces = new HashSet<>();
                 matchedSpaces.add(new MatchedSpace(space.getWhichPlayer(), currentRow, currentColumn, 1, DIR.UP));
                 matchedSpaces.add(new MatchedSpace(space.getWhichPlayer(), currentRow, currentColumn, 1, DIR.RIGHT));
@@ -70,7 +70,7 @@ public class WinEvaluator {
             return matchedSpace;
         }
 
-        if(visted.contains(matchedSpace)) {
+        if (visted.contains(matchedSpace)) {
             return null;
         }
 

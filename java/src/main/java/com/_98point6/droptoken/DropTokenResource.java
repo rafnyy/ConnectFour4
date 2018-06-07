@@ -32,7 +32,7 @@ public class DropTokenResource {
 
     @GET
     public Response getGames() throws SQLException {
-        List<String> ids= gamesTable.getAllGameIds();
+        List<String> ids = gamesTable.getAllGameIds();
 
         GetGamesResponse.Builder builder = new GetGamesResponse.Builder();
         builder.games(ids);
@@ -45,8 +45,7 @@ public class DropTokenResource {
     public Response createNewGame(CreateGameRequest request) throws SQLException {
         logger.info("request={}", request);
 
-        if(request.getColumns() < Constants.winSize || request.getRows() < Constants.winSize)
-        {
+        if (request.getColumns() < Constants.winSize || request.getRows() < Constants.winSize) {
             throw new BadRequestException("Size too small, rows and columns must be equal to or greater than " + Constants.winSize);
         }
 
@@ -83,7 +82,7 @@ public class DropTokenResource {
 
     @Path("/{id}/{playerId}")
     @POST
-    public Response postMove(@PathParam("id")String gameId, @PathParam("playerId") String playerId, PostMoveRequest request) throws SQLException {
+    public Response postMove(@PathParam("id") String gameId, @PathParam("playerId") String playerId, PostMoveRequest request) throws SQLException {
         logger.info("gameId={}, playerId={}, move={}", gameId, playerId, request);
         //lock row until...
         GameState gameState = gamesTable.getGameState(gameId);
@@ -101,7 +100,7 @@ public class DropTokenResource {
 
     @Path("/{id}/{playerId}")
     @DELETE
-    public Response playerQuit(@PathParam("id")String gameId, @PathParam("playerId") String playerId) throws SQLException {
+    public Response playerQuit(@PathParam("id") String gameId, @PathParam("playerId") String playerId) throws SQLException {
         logger.info("gameId={}, playerId={}", gameId, playerId);
         //lock row until...
         GameState gameState = gamesTable.getGameState(gameId);
@@ -114,6 +113,7 @@ public class DropTokenResource {
 
         return Response.status(Response.Status.ACCEPTED).build();
     }
+
     @Path("/{id}/moves")
     @GET
     public Response getMoves(@PathParam("id") String gameId, @QueryParam("start") Integer start, @QueryParam("until") Integer until) throws SQLException {
@@ -121,7 +121,7 @@ public class DropTokenResource {
         GameState gameState = gamesTable.getGameState(gameId);
         List<Move> moves = gameState.getMoveHistory(start, until);
         List<GetMoveResponse> getMovesResponses = new ArrayList<>();
-        for(Move move : moves) {
+        for (Move move : moves) {
             GetMoveResponse getMoveResponse = getGetMoveResponse(move);
             getMovesResponses.add(getMoveResponse);
         }

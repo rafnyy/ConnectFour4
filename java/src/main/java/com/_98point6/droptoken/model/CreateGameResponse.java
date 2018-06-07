@@ -9,7 +9,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class CreateGameResponse {
     private String gameId;
 
-    public CreateGameResponse() {}
+    public CreateGameResponse() {
+    }
 
     private CreateGameResponse(Builder builder) {
         this.gameId = Preconditions.checkNotNull(builder.gameId);

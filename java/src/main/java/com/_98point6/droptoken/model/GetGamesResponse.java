@@ -10,7 +10,8 @@ import java.util.List;
 public class GetGamesResponse {
     private List<String> games;
 
-    public GetGamesResponse() {}
+    public GetGamesResponse() {
+    }
 
     private GetGamesResponse(Builder builder) {
         this.games = Preconditions.checkNotNull(builder.games);

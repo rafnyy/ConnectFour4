@@ -10,7 +10,8 @@ import java.util.List;
 public class GetMovesResponse {
     private List<GetMoveResponse> moves;
 
-    public GetMovesResponse() {}
+    public GetMovesResponse() {
+    }
 
     private GetMovesResponse(Builder builder) {
         this.moves = Preconditions.checkNotNull(builder.moves);

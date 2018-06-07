@@ -21,18 +21,17 @@ public class Column {
     }
 
     /**
-     *
      * @param player player id
      * @return whether the token can be successfully dropped or not
      */
     public boolean dropToken(String player) {
-        if(isFull) {
+        if (isFull) {
             return false;
         }
 
         spaces[firstEmpty] = new Space(player);
         firstEmpty++;
-        if(firstEmpty >= spaces.length) {
+        if (firstEmpty >= spaces.length) {
             isFull = true;
         }
 

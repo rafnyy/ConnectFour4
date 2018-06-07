@@ -93,8 +93,7 @@ public class GameState {
 
         String playerTurn = activePlayers.get(turn);
         activePlayers.remove(player);
-        if(player.equals(playerTurn))
-        {
+        if (player.equals(playerTurn)) {
             if (turn == activePlayers.size()) {
                 turn = 0;
             }

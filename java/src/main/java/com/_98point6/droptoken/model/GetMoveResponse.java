@@ -1,6 +1,7 @@
 package com._98point6.droptoken.model;
 
 import com.google.common.base.Preconditions;
+
 import java.util.Optional;
 
 public class GetMoveResponse {
@@ -8,7 +9,8 @@ public class GetMoveResponse {
     private String player;
     private Integer column;
 
-    public GetMoveResponse() {}
+    public GetMoveResponse() {
+    }
 
     private GetMoveResponse(Builder builder) {
         this.type = Preconditions.checkNotNull(builder.type);
